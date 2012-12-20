@@ -1,0 +1,6 @@
+cobertura.ser
+.classpath
+.project
+.settings
+target/
+*.swp
