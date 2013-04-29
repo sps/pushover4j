@@ -8,7 +8,7 @@
     <groupId>com.github.sps.pushover.net</groupId>
 	<artifactId>pushover-client</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>pushover client</name>
     <description>pushover client for java</description>
     <url>http://github.com/sps/pushover4j</url>
