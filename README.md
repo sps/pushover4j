@@ -2,6 +2,7 @@ Pushover4j
 --------
 
 [![Build Status](https://travis-ci.org/sps/pushover4j.png?branch=master)](https://travis-ci.org/sps/pushover4j)
+[![Coverage Status](https://coveralls.io/repos/sps/pushover4j/badge.png?branch=master)](https://coveralls.io/r/sps/pushover4j?branch=master)
 
 A java client for [pushover](https://pushover.net/)
 
