@@ -4,3 +4,4 @@ cobertura.ser
 .settings
 target/
 *.swp
+.DS_Store
