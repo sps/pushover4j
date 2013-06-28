@@ -1,6 +1,8 @@
 Pushover4j
 --------
 
+[![Build Status](https://travis-ci.org/sps/pushover4j.png?branch=master)](https://travis-ci.org/sps/pushover4j)
+
 A java client for [pushover](https://pushover.net/)
 
 ```
