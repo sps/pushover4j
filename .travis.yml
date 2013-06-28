@@ -3,8 +3,8 @@ language: java
 install: echo "I trust Maven."
 
 # don't just run the tests, also run Findbugs and friends
-#script: mvn verify cobertura:cobertura coveralls:cobertura
-script: mvn verify
+script: mvn verify cobertura:cobertura coveralls:cobertura
+#script: mvn verify
 
 jdk:
   - oraclejdk7
@@ -15,3 +15,6 @@ notifications:
   email:
     recipients:
       - sean.scanlon@gmail.com
+env:
+  global:
+    - secure: "ZzUSjCrRJXkf9MDdot71GWSK89OViETn+vy/jqBK7qv71W7gTJsgYUYeifU3\ntNHuSpBJ5fzDJmk2bIfyimXN0CRJu0HrcT25Dr1PNXPJbqh/z6HpHfSp2rW1\n9pf0jieHQPHPDwSAWEq6laIOHvFGI9VzL7wGSRi1NbECS1dQb3M="
