@@ -3,7 +3,7 @@ language: java
 install: echo "I trust Maven."
 
 # don't just run the tests, also run Findbugs and friends
-script: mvn verify
+script: mvn verify cobertura:cobertura coveralls:cobertura
 
 jdk:
   - oraclejdk7
