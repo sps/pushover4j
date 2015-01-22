@@ -5,7 +5,7 @@ package net.pushover.client;
  */
 public enum MessagePriority {
 
-    QUIET(-1), NORMAL(0), HIGH(1);
+    LOWEST(-2), LOW(-1), QUIET(-1), NORMAL(0), HIGH(1), EMERGENCY(2);
 
     MessagePriority(int priority) {
         this.priority = priority;
