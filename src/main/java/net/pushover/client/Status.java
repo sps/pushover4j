@@ -7,7 +7,7 @@ public class Status {
 
     private final Integer status;
 
-    private String requestId;
+    private String request;
 
     public Status(Integer status) {
         this.status = status;
@@ -18,15 +18,15 @@ public class Status {
     }
 
     public String getRequestId() {
-        return requestId;
+        return request;
     }
 
     public void setRequestId(String requestId) {
-        this.requestId = requestId;
+        this.request = requestId;
     }
 
     @Override
     public String toString() {
-        return String.format("status: %s, requestId: %s", status != null ? String.valueOf(status) : "??", requestId);
+        return String.format("status: %s, requestId: %s", status != null ? String.valueOf(status) : "??", request);
     }
 }
