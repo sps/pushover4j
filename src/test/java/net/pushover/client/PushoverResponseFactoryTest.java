@@ -9,6 +9,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.http.HttpResponse;
@@ -54,7 +56,7 @@ public class PushoverResponseFactoryTest {
     public void testOKStatus() throws IOException {
         final String expectedRequestId = "1234";
 
-        when(response.getEntity()).thenReturn(new StringEntity("{\"status\":1, \"request\":" + expectedRequestId +"\"}"));
+        when(response.getEntity()).thenReturn(new StringEntity("{\"status\":1, \"request\":\"" + expectedRequestId +"\"}"));
 
         final Status status = PushoverResponseFactory.createStatus(response);
         assertNotNull(status);
@@ -62,6 +64,51 @@ public class PushoverResponseFactoryTest {
         assertEquals(status.getRequestId(), expectedRequestId);
     }
 
+    @Test
+    public void testOKVerification() throws IOException {
+        final String expectedRequestId = "1234";
+        final List<String> expectedDevices = new ArrayList<String>(){
+                {
+                      add("abc");
+                      add("efg");
+                      add("123");
+                }
+        };
+
+        when(response.getEntity()).thenReturn(new StringEntity("{\"status\":1, \"request\":\"" + expectedRequestId +"\",\"devices\": "+expectedDevices.toString()+"}"));
+
+        final Verification status = PushoverResponseFactory.createVerification(response);
+        assertNotNull(status);
+        assertEquals(status.getStatus(), 1);
+        assertEquals(status.getRequest(), expectedRequestId);
+        assertEquals(status.getDevices(), expectedDevices);
+    }
+    
+    @Test
+    public void testFailedVerification() throws IOException {
+        final String expectedRequestId = "1234";
+        final List<String> expectedDevices = new ArrayList<String>(){
+                {
+                      add("requesteddevice");
+                }
+        };
+        final List<String> reportedErrors = new ArrayList<String>(){
+                {
+                      add("User not found");
+                }
+        };
+        
+
+        when(response.getEntity()).thenReturn(new StringEntity("{\"status\":0, \"request\":\"" + expectedRequestId +"\",\"devices\": "+expectedDevices.toString()+", \"errors\":[\"User not found\"]}"));
+
+        final Verification status = PushoverResponseFactory.createVerification(response);
+        assertNotNull(status);
+        assertEquals(status.getStatus(), 0);
+        assertEquals(status.getRequest(), expectedRequestId);
+        assertEquals(status.getDevices(), expectedDevices);
+        assertEquals(status.getErrors(), reportedErrors);
+    }
+    
     @Test
     public void testCreateSoundResponse() throws IOException {
 
