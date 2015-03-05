@@ -109,7 +109,7 @@ public class PushoverResponseFactoryTest {
 
         when(response.getEntity()).thenReturn(new StringEntity("{\"status\":1, \"request\":\"" + expectedRequestId +"\",\"devices\": "+expectedDevices.toString()+"}"));
 
-        final Verification status = PushoverResponseFactory.createVerification(response);
+        final Response status = PushoverResponseFactory.createResponse(response);
         assertNotNull(status);
         assertEquals(status.getStatus(), 1);
         assertEquals(status.getRequest(), expectedRequestId);
@@ -133,7 +133,7 @@ public class PushoverResponseFactoryTest {
 
         when(response.getEntity()).thenReturn(new StringEntity("{\"status\":0, \"request\":\"" + expectedRequestId +"\",\"devices\": "+expectedDevices.toString()+", \"errors\":[\"User not found\"]}"));
 
-        final Verification status = PushoverResponseFactory.createVerification(response);
+        final Response status = PushoverResponseFactory.createResponse(response);
         assertNotNull(status);
         assertEquals(status.getStatus(), 0);
         assertEquals(status.getRequest(), expectedRequestId);

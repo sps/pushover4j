@@ -96,24 +96,6 @@ public class PushoverResponseFactory {
         }
         return sounds;
     }
-    
-    public static Verification createVerification(HttpResponse response) throws IOException {
-        if (response == null || response.getEntity() == null) {
-            throw new IOException("unreadable response!");
-        }
-
-        final String body = EntityUtils.toString(response.getEntity());
-
-        Verification v;
-
-        try {
-            v = GSON.fromJson(body, Verification.class);
-        } catch (JsonSyntaxException e) {
-            throw new IOException(e.getCause());
-        }
-
-        return v;    
-    }
 
     // {"sounds":{"id":"name",...},"status":1}
     private static class SoundResponse {
