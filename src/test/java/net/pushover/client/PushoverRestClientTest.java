@@ -67,6 +67,35 @@ public class PushoverRestClientTest {
         assertTrue(postBody.contains("priority=" + expectedPriority.getPriority()));
 
     }
+    
+     @Test
+    public void testPushMessageWithEmergencyPriority() throws Exception {
+
+        final MessagePriority expectedPriority = MessagePriority.EMERGENCY;
+        final int requestedRetry = 120;
+        final int requestedExpire = 7200;
+        final String expectedReceipt = "asdfghjkl";
+
+        when(httpClient.execute(any(HttpUriRequest.class))).thenReturn(mockHttpResponse);
+        when(mockHttpResponse.getEntity()).thenReturn(new StringEntity("{\"status\":1, \"receipt\":\""+expectedReceipt+"\"}", "UTF-8"));
+
+        client.pushMessage(PushoverMessage.builderWithApiToken("")
+                .setPriority(expectedPriority)
+                .setRetry(requestedRetry)
+                .setExpire(requestedExpire)
+                .build());
+
+        ArgumentCaptor<HttpPost> captor = ArgumentCaptor.forClass(HttpPost.class);
+
+        verify(httpClient).execute(captor.capture());
+
+        final HttpPost post = captor.getValue();
+        final String postBody = EntityUtils.toString(post.getEntity());
+        assertTrue(postBody.contains("priority=" + expectedPriority.getPriority()));
+        assertTrue(postBody.contains("retry=" + requestedRetry));
+        assertTrue(postBody.contains("expire=" + requestedExpire));
+
+    }
 
     @Test(expected = PushoverException.class)
     public void testGetSoundsWithFailure() throws Exception {

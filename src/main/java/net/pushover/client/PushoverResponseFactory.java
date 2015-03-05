@@ -19,7 +19,7 @@ public class PushoverResponseFactory {
 
     private static final Gson GSON = new Gson();
 
-    public static final String REQUEST_ID_HEADER = "X-Request-Id";
+    public static final String REQUEST_REMAINING_HEADER = "X-Limit-App-Remaining";
 
     public static Status createStatus(HttpResponse response) throws IOException {
 
@@ -29,24 +29,49 @@ public class PushoverResponseFactory {
 
         final String body = EntityUtils.toString(response.getEntity());
 
-        ResponseModel m;
+        final Status toReturn;
 
         try {
-            m = GSON.fromJson(body, ResponseModel.class);
+            toReturn = GSON.fromJson(body, Status.class);
         } catch (JsonSyntaxException e) {
             throw new IOException(e.getCause());
         }
 
-        final Status toReturn = new Status(m.status);
-        final Header responseId = response.getFirstHeader(REQUEST_ID_HEADER);
+        return toReturn;
+    }
+    
+    public static Response createResponse(HttpResponse response) throws IOException {
+          if (response == null || response.getEntity() == null) {
+            throw new IOException("unreadable response!");
+        }
+
+        final String body = EntityUtils.toString(response.getEntity());
+
+        final Response toReturn;
+
+        try {
+            toReturn = GSON.fromJson(body, Response.class);
+        } catch (JsonSyntaxException e) {
+            throw new IOException(e.getCause());
+        }
+        
+        final Header responseId = response.getFirstHeader(REQUEST_REMAINING_HEADER);
 
         if (responseId != null) {
-            toReturn.setRequestId(responseId.getValue());
+              try
+              {
+                    toReturn.setRemaining(Integer.parseInt(responseId.getValue()));
+              }
+              catch (Exception ex)
+              {
+                    toReturn.setRemaining(Integer.MIN_VALUE);  //on failure to parse just set to minimum value. easy to check for. You should never be that far in the hole.
+              }
+            
         }
 
         return toReturn;
     }
-
+    
     public static Set<PushOverSound> createSoundSet(HttpResponse response) throws IOException {
 
         if (response == null || response.getEntity() == null) {
@@ -69,11 +94,6 @@ public class PushoverResponseFactory {
             }
         }
         return sounds;
-    }
-
-    // {"status":1}
-    private static class ResponseModel {
-        int status;
     }
 
     // {"sounds":{"id":"name",...},"status":1}

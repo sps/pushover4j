@@ -37,8 +37,28 @@ public class PushoverRestClient implements PushoverClient {
     @Override
     public Status pushMessage(PushoverMessage msg) throws PushoverException {
 
-        final HttpPost post = new HttpPost(PUSH_MESSAGE_URL);
+        try {
+            HttpResponse response = postToMessageApi(msg);
+            return PushoverResponseFactory.createStatus(response);
+        } catch (Exception e) {
+            throw new PushoverException(e.getMessage(), e.getCause());
+        }
+    }
 
+    public Response pushMessageResponse(PushoverMessage msg) throws PushoverException {
+        try {
+            HttpResponse response = postToMessageApi(msg);
+            return PushoverResponseFactory.createResponse(response);
+        } catch (Exception e) {
+            throw new PushoverException(e.getMessage(), e.getCause());
+        }
+    }
+    
+    private HttpResponse postToMessageApi(PushoverMessage msg) throws PushoverException {
+
+        final HttpPost post = new HttpPost(PUSH_MESSAGE_URL);
+        HttpResponse response = null;
+        
         final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 
         nvps.add(new BasicNameValuePair("token", msg.getApiToken()));
@@ -69,13 +89,13 @@ public class PushoverRestClient implements PushoverClient {
         post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
 
         try {
-            HttpResponse response = httpClient.execute(post);
-            return PushoverResponseFactory.createStatus(response);
+            response = httpClient.execute(post);
         } catch (Exception e) {
             throw new PushoverException(e.getMessage(), e.getCause());
         }
+        return response;
     }
-
+    
     @Override
     public Set<PushOverSound> getSounds() throws PushoverException {
 
