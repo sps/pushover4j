@@ -23,7 +23,7 @@ public interface PushoverClient {
     /**
      * Retrieve a list of available sounds from the service
      * 
-     * @return
+     * @return a set of {@link PushOverSound}
      * @throws PushoverException
      */
     Set<PushOverSound> getSounds() throws PushoverException;

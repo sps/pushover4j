@@ -8,26 +8,32 @@ package net.pushover.client;
  */
 public class PushoverMessage {
 
-    private String apiToken;
+    private String apiToken;        //API key for your application
+ 
+    private String userId;          //user's/group key ideitifing the recepient(s)
 
-    private String userId;
+    private String message;         //Body of the message to send to the recepients
 
-    private String message;
+    private String device;          //target a specific users device 
 
-    private String device;
+    private String title;           //Display title (similar to email subject)
 
-    private String title;
+    private String url;             //supplemental url to be appended to the message
 
-    private String url;
+    private String titleForURL;     //name for the URL rather than display the http(s) link
 
-    private String titleForURL;
+    private MessagePriority priority = MessagePriority.NORMAL;    //priority of the message range from -2 to 2, see MessagePriority class
 
-    private MessagePriority priority = MessagePriority.NORMAL;
+    private Long timestamp;         //unix timestamp that will set a time in the message
+    
+    private String sound;           //sound to play on the users device. Overrides their default sound. List of sounds can be requested via api
 
-    private Long timestamp;
-
-    private String sound;
-
+    private int retry;              //required for emergency (2) priority messages only, specifies how frequently to retry the message.  No less than 30 seconds
+    
+    private int expire;             //how long until the pushover system stops trying to send to the user(s). System uses smaller of specified or 86440 seconds (24 hours) 
+    
+    private String emergencyCallbackUrl; //a publicly accessable webpage on your server to handle the acknoldegements of the emergency priority message.
+    
     private PushoverMessage() {
         // use the builder
     }
@@ -58,8 +64,8 @@ public class PushoverMessage {
         }
 
         /**
-         * (required) - the user key (not e-mail address) of your user (or you), viewable when
-         * logged into the dashboard
+         * (required) - the user/group key (not e-mail address) of your user or group. 
+         * Viewable when logged into the dashboard
          */
         public Builder setUserId(String userId) {
             msg.userId = userId;
@@ -67,7 +73,7 @@ public class PushoverMessage {
         }
 
         /**
-         * (required) - your message
+         * (required on push notifications, optional others) - your message
          */
         public Builder setMessage(String message) {
             msg.message = message;
@@ -133,6 +139,34 @@ public class PushoverMessage {
             msg.sound = sound;
             return this;
         }
+        
+        /**
+         * (required when priority is emergency) - how often to retry alerting
+         * the user until acknowledged. No less than 30 seconds
+         */
+        public Builder setRetry(int seconds) {
+            msg.retry = seconds;
+            return this;
+        }
+        
+        /**
+         * (required when priority is emergency) - how long to keep retrying the
+         * user unless they acknowledge. System limits to 86400 (24 hours)
+         */
+        public Builder setExpire(int seconds) {
+            msg.expire = seconds;
+            return this;
+        }
+        
+        /**
+         * (optional) - a publicly accessable URL that the system will post to 
+         * when the user acknowledges the alert.
+         */
+        public Builder setCallbackUrl(String url) {
+            msg.emergencyCallbackUrl = url;
+            return this;
+        }
+        
     }
 
     public String getApiToken() {
@@ -174,5 +208,16 @@ public class PushoverMessage {
     public String getSound() {
         return sound;
     }
-
+    
+    public int getRetry() {
+        return retry;
+    }
+    
+    public int getExpire() {
+        return expire;
+    }
+    
+    public String getCallbackUrl() {
+        return emergencyCallbackUrl;
+    }  
 }

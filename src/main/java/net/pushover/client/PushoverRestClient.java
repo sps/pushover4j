@@ -55,7 +55,15 @@ public class PushoverRestClient implements PushoverClient {
         addPairIfNotNull(nvps, "sound", msg.getSound());
 
         if (!MessagePriority.NORMAL.equals(msg.getPriority())) {
-            addPairIfNotNull(nvps, "priority", msg.getPriority());
+            
+              addPairIfNotNull(nvps, "priority", msg.getPriority());
+            
+              if (MessagePriority.EMERGENCY.equals(msg.getPriority())) {
+                  nvps.add(new BasicNameValuePair("retry", String.valueOf(msg.getRetry())));
+                  nvps.add(new BasicNameValuePair("expire", String.valueOf(msg.getExpire())));
+                  
+                  addPairIfNotNull(nvps, "callback", msg.getCallbackUrl());
+              }
         }
 
         post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
