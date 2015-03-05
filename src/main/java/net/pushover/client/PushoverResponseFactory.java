@@ -11,6 +11,8 @@ import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * encapsulate service response parsing / building
@@ -66,7 +68,6 @@ public class PushoverResponseFactory {
               {
                     toReturn.setRemaining(Integer.MIN_VALUE);  //on failure to parse just set to minimum value. easy to check for. You should never be that far in the hole.
               }
-            
         }
 
         return toReturn;

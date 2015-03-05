@@ -27,6 +27,7 @@ public class PushoverRestClient implements PushoverClient {
 
     public static final String PUSH_MESSAGE_URL = "https://api.pushover.net/1/messages.json";
     public static final String SOUND_LIST_URL = "https://api.pushover.net/1/sounds.json";
+    public static final String VALIDATE_USERGROUP_URL = "https://api.pushover.net/1/users/validate.json";
 
     private static final HttpUriRequest SOUND_LIST_REQUEST = new HttpGet(SOUND_LIST_URL);
 
@@ -48,6 +49,25 @@ public class PushoverRestClient implements PushoverClient {
     public Response pushMessageResponse(PushoverMessage msg) throws PushoverException {
         try {
             HttpResponse response = postToMessageApi(msg);
+            return PushoverResponseFactory.createResponse(response);
+        } catch (Exception e) {
+            throw new PushoverException(e.getMessage(), e.getCause());
+        }
+    }
+    
+    public Response requestVerification(PushoverMessage msg) throws PushoverException {
+
+        final HttpPost post = new HttpPost(VALIDATE_USERGROUP_URL);
+
+        final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+
+        nvps.add(new BasicNameValuePair("token", msg.getApiToken()));
+        nvps.add(new BasicNameValuePair("user", msg.getUserId()));
+        
+        addPairIfNotNull(nvps, "device", msg.getDevice());
+        
+        try {
+            HttpResponse response = httpClient.execute(post);
             return PushoverResponseFactory.createResponse(response);
         } catch (Exception e) {
             throw new PushoverException(e.getMessage(), e.getCause());

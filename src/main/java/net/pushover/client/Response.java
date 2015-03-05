@@ -15,6 +15,7 @@
  */
 package net.pushover.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,11 +28,27 @@ public class Response {
       private List<String> errors;
       private String receipt;
       private int remaining;
+      private List<String> devices;
+      
+      public Response()
+      {
+            status = 0;
+            request = "";
+            errors = new ArrayList<String>();
+                  errors.add("Default constructor. No information available");
+            receipt = "";
+            remaining = Integer.MIN_VALUE;
+            devices = new ArrayList<String>();
+      }
       
       public Response(int status, String request)
       {
             this.status = status;
             this.request = request;
+            errors = new ArrayList<String>();
+            receipt = "";
+            remaining = Integer.MIN_VALUE;
+            devices = new ArrayList<String>();
       }
       
       public int getStatus() {
@@ -54,6 +71,10 @@ public class Response {
             return remaining;
       }
           
+      public List<String> getDevices() {
+            return devices;
+      }
+      
       public void setErrors(List<String> errors) {
             this.errors = errors;
       }
