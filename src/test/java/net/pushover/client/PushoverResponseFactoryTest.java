@@ -54,10 +54,7 @@ public class PushoverResponseFactoryTest {
     public void testOKStatus() throws IOException {
         final String expectedRequestId = "1234";
 
-        when(response.getEntity()).thenReturn(new StringEntity("{\"status\":1}"));
-
-        when(response.getFirstHeader(PushoverResponseFactory.REQUEST_ID_HEADER)).thenReturn(new BasicHeader(PushoverResponseFactory.REQUEST_ID_HEADER,
-                expectedRequestId));
+        when(response.getEntity()).thenReturn(new StringEntity("{\"status\":1, \"request\":" + expectedRequestId +"\"}"));
 
         final Status status = PushoverResponseFactory.createStatus(response);
         assertNotNull(status);

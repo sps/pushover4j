@@ -5,12 +5,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * encapsulate service response parsing / building
@@ -18,8 +19,6 @@ import com.google.gson.JsonSyntaxException;
 public class PushoverResponseFactory {
 
     private static final Gson GSON = new Gson();
-
-    public static final String REQUEST_ID_HEADER = "X-Request-Id";
 
     public static Status createStatus(HttpResponse response) throws IOException {
 
@@ -38,10 +37,9 @@ public class PushoverResponseFactory {
         }
 
         final Status toReturn = new Status(m.status);
-        final Header responseId = response.getFirstHeader(REQUEST_ID_HEADER);
-
-        if (responseId != null) {
-            toReturn.setRequestId(responseId.getValue());
+        
+        if (m.request != null) {
+            toReturn.setRequestId(m.request);
         }
 
         return toReturn;
@@ -70,10 +68,34 @@ public class PushoverResponseFactory {
         }
         return sounds;
     }
+    
+    public static Verification createVerification(HttpResponse response) throws IOException {
+        if (response == null || response.getEntity() == null) {
+            throw new IOException("unreadable response!");
+        }
+
+        final String body = EntityUtils.toString(response.getEntity());
+
+        Verification v;
+
+        try {
+            v = GSON.fromJson(body, Verification.class);
+        } catch (JsonSyntaxException e) {
+            throw new IOException(e.getCause());
+        }
+
+        return v;    
+    }
 
     // {"status":1}
     private static class ResponseModel {
         int status;
+        String request;
+        String user;
+        List<String> errors = new ArrayList<String>();
+        List<String> devices = new ArrayList<String>();
+        String receipt;
+        int remaining_messages;
     }
 
     // {"sounds":{"id":"name",...},"status":1}
