@@ -54,15 +54,44 @@ public class PushoverResponseFactoryTest {
     public void testOKStatus() throws IOException {
         final String expectedRequestId = "1234";
 
-        when(response.getEntity()).thenReturn(new StringEntity("{\"status\":1}"));
-
-        when(response.getFirstHeader(PushoverResponseFactory.REQUEST_ID_HEADER)).thenReturn(new BasicHeader(PushoverResponseFactory.REQUEST_ID_HEADER,
-                expectedRequestId));
+        when(response.getEntity()).thenReturn(new StringEntity("{\"status\":1, \"request\":\"" + expectedRequestId +"\"}"));
 
         final Status status = PushoverResponseFactory.createStatus(response);
+        
         assertNotNull(status);
         assertEquals(status.getStatus(), 1);
         assertEquals(status.getRequestId(), expectedRequestId);
+    }
+    
+    @Test
+    public void testOKResponse() throws IOException {
+        final String expectedRequestId = "1234";
+        final int expectedRemaining = 4321;
+
+        when(response.getEntity()).thenReturn(new StringEntity("{\"status\":1, \"request\":\"" + expectedRequestId +"\"}"));
+
+        when(response.getFirstHeader(PushoverResponseFactory.REQUEST_REMAINING_HEADER)).thenReturn(new BasicHeader(PushoverResponseFactory.REQUEST_REMAINING_HEADER,
+                String.valueOf(expectedRemaining)));
+
+        final Response status = PushoverResponseFactory.createResponse(response);
+        assertNotNull(status);
+        assertEquals(status.getStatus(), 1);
+        assertEquals(status.getRequest(), expectedRequestId);
+        assertEquals(status.getRemaining(), expectedRemaining);
+    }
+    
+    @Test
+    public void testOKEmergencyResponse() throws IOException {
+        final String expectedRequestId = "1234";
+        final String expectedReceipt = "qwertyuiop";
+
+        when(response.getEntity()).thenReturn(new StringEntity("{\"status\":1, \"request\":\"" + expectedRequestId +"\",\"receipt\":\"" + expectedReceipt +"\"}"));
+
+        final Response resp = PushoverResponseFactory.createResponse(response);
+        assertNotNull(resp);
+        assertEquals(resp.getStatus(), 1);
+        assertEquals(resp.getRequest(), expectedRequestId);
+        assertEquals(resp.getReceipt(), expectedReceipt);
     }
 
     @Test
