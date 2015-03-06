@@ -23,12 +23,12 @@ import java.util.List;
  * @author Hal-Hockersmith
  */
 public class Response {
-      private int status;
-      private String request;
-      private List<String> errors;
-      private String receipt;
+      private final int status;
+      private final String request;
+      private final List<String> errors;
+      private final String receipt;
       private int remaining;
-      private List<String> devices;
+      private final List<String> devices;
       
       public Response()
       {
@@ -74,15 +74,7 @@ public class Response {
       public List<String> getDevices() {
             return devices;
       }
-      
-      public void setErrors(List<String> errors) {
-            this.errors = errors;
-      }
-      
-      public void setReceipt(String receipt) {
-            this.receipt = receipt;
-      }     
-     
+           
       public void setRemaining(int remains)
       {
             this.remaining = remains;

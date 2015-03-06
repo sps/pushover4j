@@ -72,6 +72,24 @@ public class PushoverResponseFactory {
 
         return toReturn;
     }
+        
+    static Receipt createReceipt(HttpResponse response) throws IOException {
+        if (response == null || response.getEntity() == null) {
+            throw new IOException("unreadable response!");
+        }
+
+        final String body = EntityUtils.toString(response.getEntity());
+
+        final Receipt toReturn;
+
+        try {
+            toReturn = GSON.fromJson(body, Receipt.class);
+        } catch (JsonSyntaxException e) {
+            throw new IOException(e.getCause());
+        }
+
+        return toReturn;
+    }
     
     public static Set<PushOverSound> createSoundSet(HttpResponse response) throws IOException {
 

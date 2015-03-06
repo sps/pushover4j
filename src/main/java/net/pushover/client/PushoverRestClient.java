@@ -28,7 +28,8 @@ public class PushoverRestClient implements PushoverClient {
     public static final String PUSH_MESSAGE_URL = "https://api.pushover.net/1/messages.json";
     public static final String SOUND_LIST_URL = "https://api.pushover.net/1/sounds.json";
     public static final String VALIDATE_USERGROUP_URL = "https://api.pushover.net/1/users/validate.json";
-
+    public static final String RECEIPT_CHECK_URL_FRAGMENT = "https://api.pushover.net/1/receipts/";
+    
     private static final HttpUriRequest SOUND_LIST_REQUEST = new HttpGet(SOUND_LIST_URL);
 
     private HttpClient httpClient = new DefaultHttpClient();
@@ -66,6 +67,37 @@ public class PushoverRestClient implements PushoverClient {
         
         addPairIfNotNull(nvps, "device", msg.getDevice());
         
+        post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
+
+        try {
+            HttpResponse response = httpClient.execute(post);
+            return PushoverResponseFactory.createResponse(response);
+        } catch (Exception e) {
+            throw new PushoverException(e.getMessage(), e.getCause());
+        }
+    }
+    
+    public Receipt requestEmergencyReceipt(String apiToken, String receipt) throws PushoverException{
+          
+          final HttpGet get = new HttpGet(RECEIPT_CHECK_URL_FRAGMENT + receipt +".json?token="+apiToken);
+          
+          try {
+            HttpResponse response = httpClient.execute(get);
+            return PushoverResponseFactory.createReceipt(response);
+        } catch (Exception e) {
+            throw new PushoverException(e.getMessage(), e.getCause());
+        }                 
+    }
+    
+    public Response cancelEmergencyMessage(String apiToken, String receipt) throws PushoverException {
+         final HttpPost post = new HttpPost(RECEIPT_CHECK_URL_FRAGMENT + receipt +"/cancel.json");
+
+        final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+
+        nvps.add(new BasicNameValuePair("token", apiToken));
+        
+        post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
+
         try {
             HttpResponse response = httpClient.execute(post);
             return PushoverResponseFactory.createResponse(response);

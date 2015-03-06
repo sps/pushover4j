@@ -142,6 +142,63 @@ public class PushoverResponseFactoryTest {
     }
     
     @Test
+    public void testOkReceipt() throws IOException {
+        final long acknowledged_at = 12345678;
+        final String acknoledged_by = "user1";
+        final long last_delivered_at = 12345670;      
+        final int expired = 0;            
+        final long expires_at = 13000000; 
+        final int called_back = 0;        
+        final long called_back_at = 0;    
+        final String request = "lkjhpoiumn";
+
+        when(response.getEntity()).thenReturn(new StringEntity(
+                  new StringBuilder().append("{\"status\":1, \"acknowledged\":1")
+                              .append(",\"acknowledged_at\":").append(acknowledged_at)
+                              .append(",\"acknowledged_by\":").append(acknoledged_by)
+                              .append(",\"last_delivered_at\":").append(last_delivered_at)
+                              .append(",\"expired\":").append(expired)
+                              .append(",\"expires_at\":").append(expires_at)
+                              .append(",\"called_back\":").append(called_back)
+                              .append(",\"called_back_at\":").append(called_back_at)
+                              .append(",\"request\":").append(request)
+                              .append("}").toString()
+            ));
+
+        final Receipt rcpt = PushoverResponseFactory.createReceipt(response);
+        assertNotNull(rcpt);
+        assertEquals(rcpt.getStatus(), 1);
+        assertEquals(rcpt.getRequest(), request);
+        assertEquals(rcpt.getAcknowledged(), 1);
+        assertEquals(rcpt.getAcknowledgedAt(), acknowledged_at);
+        assertEquals(rcpt.getAcknowledgedBy(), acknoledged_by);
+        assertEquals(rcpt.getCalledBack(), called_back);
+        assertEquals(rcpt.getCalledBackAt(), called_back_at);
+        assertEquals(rcpt.getExpired(), expired);
+        assertEquals(rcpt.getExpiresAt(), expires_at);
+        assertEquals(rcpt.getLastDeliveredAt(), last_delivered_at);
+    }
+    
+    @Test
+    public void testFailedReceipt() throws IOException {
+        final List<String> reportedErrors = new ArrayList<String>(){
+                {
+                      add("User not found");
+                }
+        };
+        
+        when(response.getEntity()).thenReturn(new StringEntity(
+                  new StringBuilder().append("{\"status\":0")
+                              .append(",\"errors\":[\"User not found\"]}").toString()
+            ));
+
+        final Receipt rcpt = PushoverResponseFactory.createReceipt(response);
+        assertNotNull(rcpt);
+        assertEquals(rcpt.getStatus(), 0);
+        assertEquals(rcpt.getErrors(), reportedErrors);
+    }
+    
+    @Test
     public void testCreateSoundResponse() throws IOException {
 
         when(response.getEntity()).thenReturn(new StringEntity("{\"sounds\":{\"id\":\"name\"},\"status\":1}"));
