@@ -8,7 +8,7 @@
     <groupId>com.github.sps.pushover.net</groupId>
 	<artifactId>pushover-client</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.5</version>
 	<name>pushover client</name>
     <description>pushover client for java</description>
     <url>http://github.com/sps/pushover4j</url>
@@ -93,7 +93,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.2.1</version>
+			<version>4.4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
