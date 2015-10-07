@@ -32,7 +32,7 @@ public class PushoverRestClient implements PushoverClient {
     
     private static final HttpUriRequest SOUND_LIST_REQUEST = new HttpGet(SOUND_LIST_URL);
 
-    private HttpClient httpClient = HttpClientBuilder.create().build();;
+    private HttpClient httpClient = HttpClients.custom().useSystemProperties().build();
 
     private static final AtomicReference<Set<PushOverSound>> SOUND_CACHE = new AtomicReference<Set<PushOverSound>>();
 
