@@ -23,6 +23,14 @@ public class PushoverResponseFactory {
 
     public static final String REQUEST_REMAINING_HEADER = "X-Limit-App-Remaining";
 
+    /**
+     * Parses the returned HttpResponse into a simplified Status 
+     * 
+     * @param response HttpResponse returned from the HttpPost to the message API
+     * @return {@link Status} Simplified status and response only.
+     * @throws IOException on null response and parse failures
+     */
+    
     public static Status createStatus(HttpResponse response) throws IOException {
 
         if (response == null || response.getEntity() == null) {
@@ -42,6 +50,13 @@ public class PushoverResponseFactory {
         return toReturn;
     }
     
+    /**
+     * Parses the returned HttpResponse into a more complete Response 
+     * 
+     * @param response HttpResponse returned from the HttpPost to the message API
+     * @return {@link Response} Advanced handler of most/all known response fields the api can return.
+     * @throws IOException on null response and parse failures
+     */
     public static Response createResponse(HttpResponse response) throws IOException {
           if (response == null || response.getEntity() == null) {
             throw new IOException("unreadable response!");
@@ -73,6 +88,13 @@ public class PushoverResponseFactory {
         return toReturn;
     }
         
+    /**
+     * Parses the returned HttpResponse from a Receipt request into a receipt object
+     * 
+     * @param response HttpResponse returned from the HttpPost to the receipt API
+     * @return {@link Receipt} Handler that contains all known fields from the receipt check API.
+     * @throws IOException on null response and parse failures
+     */
     static Receipt createReceipt(HttpResponse response) throws IOException {
         if (response == null || response.getEntity() == null) {
             throw new IOException("unreadable response!");
@@ -91,6 +113,13 @@ public class PushoverResponseFactory {
         return toReturn;
     }
     
+    /**
+     * Parses the returned HttpResponse from a sound list request into a SoundSet object
+     * 
+     * @param response HttpResponse returned from the HttpPost to the receipt API
+     * @return Set<{@link PushOverSound}> Set of PushOverSounds for supported sounds
+     * @throws IOException on null response and parse failures
+     */
     public static Set<PushOverSound> createSoundSet(HttpResponse response) throws IOException {
 
         if (response == null || response.getEntity() == null) {

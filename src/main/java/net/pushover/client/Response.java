@@ -1,26 +1,14 @@
-/*
- * Copyright 2015 Hal-Hockersmith.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package net.pushover.client;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author Hal-Hockersmith
+ * JSON API response handler. Supports more of the fields that are returned from pushover
+ * 
+ * @author Hal Hockersmith
+ * 
+ * @since 2015-03-04
  */
 public class Response {
       private final int status;
@@ -28,7 +16,7 @@ public class Response {
       private final List<String> errors;
       private final String receipt;
       private int remaining;
-      private final List<String> devices;
+      private final List<String> devices;       //only returned on verfication calls
       
       public Response()
       {
@@ -75,6 +63,12 @@ public class Response {
             return devices;
       }
            
+      /**
+       * Sets the Remaining calls to the API. The remaining are reported in the
+       * headers so this is used to set the value once received.
+       * 
+       * @param remains Number of calls to the API remaining for the month
+       */
       public void setRemaining(int remains)
       {
             this.remaining = remains;
