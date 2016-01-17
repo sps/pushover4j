@@ -39,4 +39,4 @@ for the non-maven types, here are the required dependencies
 
 * [pushover4j](http://github.com/sps/pushover4j/downloads)
 * [gson 2.2.2](http://code.google.com/p/google-gson/downloads/list)
-* [apache commons httpclient 4.2.1](http://hc.apache.org/downloads.cgi)
+* [apache commons httpclient 4.3.6](http://hc.apache.org/downloads.cgi)

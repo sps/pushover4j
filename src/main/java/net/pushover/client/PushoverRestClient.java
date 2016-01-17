@@ -13,7 +13,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
 /**
@@ -30,7 +30,7 @@ public class PushoverRestClient implements PushoverClient {
 
     private static final HttpUriRequest SOUND_LIST_REQUEST = new HttpGet(SOUND_LIST_URL);
 
-    private HttpClient httpClient = new DefaultHttpClient();
+    private HttpClient httpClient = HttpClients.custom().useSystemProperties().build();
 
     private static final AtomicReference<Set<PushOverSound>> SOUND_CACHE = new AtomicReference<Set<PushOverSound>>();
 
