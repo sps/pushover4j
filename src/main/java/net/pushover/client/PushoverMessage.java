@@ -8,171 +8,183 @@ package net.pushover.client;
  */
 public class PushoverMessage {
 
-    private String apiToken;
+	private String apiToken;
 
-    private String userId;
+	private String userId;
 
-    private String message;
+	private String message;
 
-    private String device;
+	private String htmlMessage;
 
-    private String title;
+	private String device;
 
-    private String url;
+	private String title;
 
-    private String titleForURL;
+	private String url;
 
-    private MessagePriority priority = MessagePriority.NORMAL;
+	private String titleForURL;
 
-    private Long timestamp;
+	private MessagePriority priority = MessagePriority.NORMAL;
 
-    private String sound;
+	private Long timestamp;
 
-    private PushoverMessage() {
-        // use the builder
-    }
+	private String sound;
 
-    public static Builder builderWithApiToken(String token) {
-        return new Builder().setApiToken(token);
-    }
+	private PushoverMessage() {
+		// use the builder
+	}
 
-    public static class Builder {
+	public static Builder builderWithApiToken(String token) {
+		return new Builder().setApiToken(token);
+	}
 
-        private PushoverMessage msg;
+	public static class Builder {
 
-        public Builder() {
-            msg = new PushoverMessage();
-        }
+		private PushoverMessage msg;
 
-        public PushoverMessage build() {
-            // TODO: validate message!
-            return msg;
-        }
+		public Builder() {
+			msg = new PushoverMessage();
+		}
 
-        /**
-         * (required) - your application's API token
-         */
-        public Builder setApiToken(String apiToken) {
-            msg.apiToken = apiToken;
-            return this;
-        }
+		public PushoverMessage build() {
+			// TODO: validate message!
+			return msg;
+		}
 
-        /**
-         * (required) - the user key (not e-mail address) of your user (or you), viewable when
-         * logged into the dashboard
-         */
-        public Builder setUserId(String userId) {
-            msg.userId = userId;
-            return this;
-        }
+		/**
+		 * (required) - your application's API token
+		 */
+		public Builder setApiToken(String apiToken) {
+			msg.apiToken = apiToken;
+			return this;
+		}
 
-        /**
-         * (required) - your message
-         */
-        public Builder setMessage(String message) {
-            msg.message = message;
-            return this;
-        }
+		/**
+		 * (required) - the user key (not e-mail address) of your user (or you),
+		 * viewable when logged into the dashboard
+		 */
+		public Builder setUserId(String userId) {
+			msg.userId = userId;
+			return this;
+		}
 
-        /**
-         * (optional) - your user's device identifier to send the message directly to that device,
-         * rather than all of the user's devices
-         */
-        public Builder setDevice(String device) {
-            msg.device = device;
-            return this;
-        }
+		/**
+		 * (required) - your message
+		 */
+		public Builder setMessage(String message) {
+			msg.message = message;
+			return this;
+		}
 
-        /**
-         * (optional) - your message's title, otherwise uses your app's name
-         */
-        public Builder setTitle(String title) {
-            msg.title = title;
-            return this;
-        }
+		public Builder setHtmlMessage(String htmlMessage) {
+			msg.htmlMessage = htmlMessage;
+			return this;
+		}
 
-        /**
-         * (optional) - a supplementary URL to show with your message
-         */
-        public Builder setUrl(String url) {
-            msg.url = url;
-            return this;
-        }
+		/**
+		 * (optional) - your user's device identifier to send the message
+		 * directly to that device, rather than all of the user's devices
+		 */
+		public Builder setDevice(String device) {
+			msg.device = device;
+			return this;
+		}
 
-        /**
-         * (optional) - a title for your supplementary URL
-         */
-        public Builder setTitleForURL(String titleForURL) {
-            msg.titleForURL = titleForURL;
-            return this;
-        }
+		/**
+		 * (optional) - your message's title, otherwise uses your app's name
+		 */
+		public Builder setTitle(String title) {
+			msg.title = title;
+			return this;
+		}
 
-        /**
-         * (optional) - set to MessagePriority.HIGH to display as high-priority and bypass quiet
-         * hours, or MessagePriority.QUIET to always send as a quiet notification
-         */
-        public Builder setPriority(MessagePriority priority) {
-            msg.priority = priority;
-            return this;
-        }
+		/**
+		 * (optional) - a supplementary URL to show with your message
+		 */
+		public Builder setUrl(String url) {
+			msg.url = url;
+			return this;
+		}
 
-        /**
-         * (optional) - set to a Unix timestamp to have your message show with a particular time,
-         * rather than now
-         */
-        public Builder setTimestamp(Long timestamp) {
-            msg.timestamp = timestamp;
-            return this;
-        }
+		/**
+		 * (optional) - a title for your supplementary URL
+		 */
+		public Builder setTitleForURL(String titleForURL) {
+			msg.titleForURL = titleForURL;
+			return this;
+		}
 
-        /**
-         * (optional) - set to the name of one of the sounds supported by device clients to override
-         * the user's default sound choice
-         */
-        public Builder setSound(String sound) {
-            msg.sound = sound;
-            return this;
-        }
-    }
+		/**
+		 * (optional) - set to MessagePriority.HIGH to display as high-priority
+		 * and bypass quiet hours, or MessagePriority.QUIET to always send as a
+		 * quiet notification
+		 */
+		public Builder setPriority(MessagePriority priority) {
+			msg.priority = priority;
+			return this;
+		}
 
-    public String getApiToken() {
-        return apiToken;
-    }
+		/**
+		 * (optional) - set to a Unix timestamp to have your message show with a
+		 * particular time, rather than now
+		 */
+		public Builder setTimestamp(Long timestamp) {
+			msg.timestamp = timestamp;
+			return this;
+		}
 
-    public String getUserId() {
-        return userId;
-    }
+		/**
+		 * (optional) - set to the name of one of the sounds supported by device
+		 * clients to override the user's default sound choice
+		 */
+		public Builder setSound(String sound) {
+			msg.sound = sound;
+			return this;
+		}
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	public String getApiToken() {
+		return apiToken;
+	}
 
-    public String getDevice() {
-        return device;
-    }
+	public String getUserId() {
+		return userId;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public String getMessage() {
+		return message;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public String getDevice() {
+		return device;
+	}
 
-    public String getTitleForURL() {
-        return titleForURL;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public MessagePriority getPriority() {
-        return priority;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public Long getTimestamp() {
-        return timestamp;
-    }
+	public String getTitleForURL() {
+		return titleForURL;
+	}
 
-    public String getSound() {
-        return sound;
-    }
+	public MessagePriority getPriority() {
+		return priority;
+	}
+
+	public Long getTimestamp() {
+		return timestamp;
+	}
+
+	public String getSound() {
+		return sound;
+	}
+
+	public String getHtmlMessage() {
+		return htmlMessage;
+	}
 
 }
