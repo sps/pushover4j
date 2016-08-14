@@ -37,10 +37,6 @@ public class PushoverRestClient implements PushoverClient {
 	@Override
 	public Status pushMessage(PushoverMessage msg) throws PushoverException {
 
-		if (msg.getHtmlMessage() != null && msg.getHtmlMessage().trim().length() > 0) {
-			PUSH_MESSAGE_URL += "?html=1";
-		}
-
 		final HttpPost post = new HttpPost(PUSH_MESSAGE_URL);
 
 		final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
@@ -61,6 +57,10 @@ public class PushoverRestClient implements PushoverClient {
 		addPairIfNotNull(nvps, "device", msg.getDevice());
 		addPairIfNotNull(nvps, "timestamp", msg.getTimestamp());
 		addPairIfNotNull(nvps, "sound", msg.getSound());
+
+		if (msg.getHtmlMessage() != null && msg.getHtmlMessage().trim().length() > 0) {
+			addPairIfNotNull(nvps, "html", "1");
+		}
 
 		if (!MessagePriority.NORMAL.equals(msg.getPriority())) {
 			addPairIfNotNull(nvps, "priority", msg.getPriority());
