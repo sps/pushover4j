@@ -25,77 +25,85 @@ import org.apache.http.message.BasicNameValuePair;
  */
 public class PushoverRestClient implements PushoverClient {
 
-    public static final String PUSH_MESSAGE_URL = "https://api.pushover.net/1/messages.json";
-    public static final String SOUND_LIST_URL = "https://api.pushover.net/1/sounds.json";
+	public static String PUSH_MESSAGE_URL = "https://api.pushover.net/1/messages.json";
+	public static final String SOUND_LIST_URL = "https://api.pushover.net/1/sounds.json";
 
-    private static final HttpUriRequest SOUND_LIST_REQUEST = new HttpGet(SOUND_LIST_URL);
+	private static final HttpUriRequest SOUND_LIST_REQUEST = new HttpGet(SOUND_LIST_URL);
 
-    private HttpClient httpClient = HttpClients.custom().useSystemProperties().build();
+	private HttpClient httpClient = HttpClients.custom().useSystemProperties().build();
 
-    private static final AtomicReference<Set<PushOverSound>> SOUND_CACHE = new AtomicReference<Set<PushOverSound>>();
+	private static final AtomicReference<Set<PushOverSound>> SOUND_CACHE = new AtomicReference<Set<PushOverSound>>();
 
-    @Override
-    public Status pushMessage(PushoverMessage msg) throws PushoverException {
+	@Override
+	public Status pushMessage(PushoverMessage msg) throws PushoverException {
 
-        final HttpPost post = new HttpPost(PUSH_MESSAGE_URL);
+		final HttpPost post = new HttpPost(PUSH_MESSAGE_URL);
 
-        final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+		final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
 
-        nvps.add(new BasicNameValuePair("token", msg.getApiToken()));
-        nvps.add(new BasicNameValuePair("user", msg.getUserId()));
-        nvps.add(new BasicNameValuePair("message", msg.getMessage()));
+		nvps.add(new BasicNameValuePair("token", msg.getApiToken()));
+		nvps.add(new BasicNameValuePair("user", msg.getUserId()));
+		if (msg.getHtmlMessage() != null && msg.getHtmlMessage().trim().length() > 0) {
+			nvps.add(new BasicNameValuePair("message", msg.getHtmlMessage()));
+		} else {
+			nvps.add(new BasicNameValuePair("message", msg.getMessage()));
+		}
 
-        addPairIfNotNull(nvps, "title", msg.getTitle());
+		addPairIfNotNull(nvps, "title", msg.getTitle());
 
-        addPairIfNotNull(nvps, "url", msg.getUrl());
-        addPairIfNotNull(nvps, "url_title", msg.getTitleForURL());
+		addPairIfNotNull(nvps, "url", msg.getUrl());
+		addPairIfNotNull(nvps, "url_title", msg.getTitleForURL());
 
-        addPairIfNotNull(nvps, "device", msg.getDevice());
-        addPairIfNotNull(nvps, "timestamp", msg.getTimestamp());
-        addPairIfNotNull(nvps, "sound", msg.getSound());
+		addPairIfNotNull(nvps, "device", msg.getDevice());
+		addPairIfNotNull(nvps, "timestamp", msg.getTimestamp());
+		addPairIfNotNull(nvps, "sound", msg.getSound());
 
-        if (!MessagePriority.NORMAL.equals(msg.getPriority())) {
-            addPairIfNotNull(nvps, "priority", msg.getPriority());
-        }
+		if (msg.getHtmlMessage() != null && msg.getHtmlMessage().trim().length() > 0) {
+			addPairIfNotNull(nvps, "html", "1");
+		}
 
-        post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
+		if (!MessagePriority.NORMAL.equals(msg.getPriority())) {
+			addPairIfNotNull(nvps, "priority", msg.getPriority());
+		}
 
-        try {
-            HttpResponse response = httpClient.execute(post);
-            return PushoverResponseFactory.createStatus(response);
-        } catch (Exception e) {
-            throw new PushoverException(e.getMessage(), e.getCause());
-        }
-    }
+		post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
 
-    @Override
-    public Set<PushOverSound> getSounds() throws PushoverException {
+		try {
+			HttpResponse response = httpClient.execute(post);
+			return PushoverResponseFactory.createStatus(response);
+		} catch (Exception e) {
+			throw new PushoverException(e.getMessage(), e.getCause());
+		}
+	}
 
-        Set<PushOverSound> cachedSounds = SOUND_CACHE.get();
-        if (cachedSounds == null) {
-            try {
-                cachedSounds = PushoverResponseFactory.createSoundSet(httpClient.execute(SOUND_LIST_REQUEST));
-            } catch (Exception e) {
-                throw new PushoverException(e.getMessage(), e.getCause());
-            }
-            SOUND_CACHE.set(cachedSounds);
-        }
-        return cachedSounds;
-    }
+	@Override
+	public Set<PushOverSound> getSounds() throws PushoverException {
 
-    private void addPairIfNotNull(List<NameValuePair> nvps, String key, Object value) {
-        if (value != null) {
-            nvps.add(new BasicNameValuePair(key, value.toString()));
-        }
-    }
+		Set<PushOverSound> cachedSounds = SOUND_CACHE.get();
+		if (cachedSounds == null) {
+			try {
+				cachedSounds = PushoverResponseFactory.createSoundSet(httpClient.execute(SOUND_LIST_REQUEST));
+			} catch (Exception e) {
+				throw new PushoverException(e.getMessage(), e.getCause());
+			}
+			SOUND_CACHE.set(cachedSounds);
+		}
+		return cachedSounds;
+	}
 
-    /**
-     * Optionally provide an alternative {@link HttpClient}
-     * 
-     * @param httpClient
-     */
-    public void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
+	private void addPairIfNotNull(List<NameValuePair> nvps, String key, Object value) {
+		if (value != null) {
+			nvps.add(new BasicNameValuePair(key, value.toString()));
+		}
+	}
+
+	/**
+	 * Optionally provide an alternative {@link HttpClient}
+	 * 
+	 * @param httpClient
+	 */
+	public void setHttpClient(HttpClient httpClient) {
+		this.httpClient = httpClient;
+	}
 
 }
