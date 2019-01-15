@@ -1,5 +1,7 @@
 package net.pushover.client;
 
+import java.io.File;
+
 /**
  * 
  * @author Sean Scanlon <sean.scanlon@gmail.com>
@@ -33,6 +35,8 @@ public class PushoverMessage {
     private int expire;             //how long until the pushover system stops trying to send to the user(s). System uses smaller of specified or 86440 seconds (24 hours) 
     
     private String emergencyCallbackUrl; //a publicly accessable webpage on your server to handle the acknoldegements of the emergency priority message.
+
+    private File attachment;
     
     private PushoverMessage() {
         // use the builder
@@ -166,6 +170,15 @@ public class PushoverMessage {
             msg.emergencyCallbackUrl = url;
             return this;
         }
+
+        /**
+         * (optional) - As of version 3.0 of our iOS, Android, and
+         * Desktop apps, Pushover messages can include an image attachment.
+         */
+        public Builder setAttachment(File attachment) {
+            msg.attachment = attachment;
+            return this;
+        }
         
     }
 
@@ -219,5 +232,9 @@ public class PushoverMessage {
     
     public String getCallbackUrl() {
         return emergencyCallbackUrl;
-    }  
+    }
+
+    public File getAttachment() {
+        return attachment;
+    }
 }

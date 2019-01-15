@@ -1,10 +1,12 @@
 package net.pushover.client;
 
+import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -13,6 +15,8 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -84,14 +88,14 @@ public class PushoverRestClient implements PushoverClient {
 
         final HttpPost post = new HttpPost(VALIDATE_USERGROUP_URL);
 
-        final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        final MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
 
-        nvps.add(new BasicNameValuePair("token", msg.getApiToken()));
-        nvps.add(new BasicNameValuePair("user", msg.getUserId()));
+        entityBuilder.addTextBody("token", msg.getApiToken());
+        entityBuilder.addTextBody("user", msg.getUserId());
         
-        addPairIfNotNull(nvps, "device", msg.getDevice());
+        addPairIfNotNull(entityBuilder, "device", msg.getDevice());
         
-        post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
+        post.setEntity(entityBuilder.build());
 
         try {
             HttpResponse response = httpClient.execute(post);
@@ -156,34 +160,42 @@ public class PushoverRestClient implements PushoverClient {
         final HttpPost post = new HttpPost(PUSH_MESSAGE_URL);
         HttpResponse response = null;
         
-        final List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        final MultipartEntityBuilder entityBuilder = MultipartEntityBuilder.create();
 
-        nvps.add(new BasicNameValuePair("token", msg.getApiToken()));
-        nvps.add(new BasicNameValuePair("user", msg.getUserId()));
-        nvps.add(new BasicNameValuePair("message", msg.getMessage()));
+        entityBuilder.addTextBody("token", msg.getApiToken());
+        entityBuilder.addTextBody("user", msg.getUserId());
+        entityBuilder.addTextBody("message", msg.getMessage());
 
-        addPairIfNotNull(nvps, "title", msg.getTitle());
+        addPairIfNotNull(entityBuilder, "title", msg.getTitle());
 
-        addPairIfNotNull(nvps, "url", msg.getUrl());
-        addPairIfNotNull(nvps, "url_title", msg.getTitleForURL());
+        addPairIfNotNull(entityBuilder, "url", msg.getUrl());
+        addPairIfNotNull(entityBuilder, "url_title", msg.getTitleForURL());
 
-        addPairIfNotNull(nvps, "device", msg.getDevice());
-        addPairIfNotNull(nvps, "timestamp", msg.getTimestamp());
-        addPairIfNotNull(nvps, "sound", msg.getSound());
+        addPairIfNotNull(entityBuilder, "device", msg.getDevice());
+        addPairIfNotNull(entityBuilder, "timestamp", msg.getTimestamp());
+        addPairIfNotNull(entityBuilder, "sound", msg.getSound());
 
         if (!MessagePriority.NORMAL.equals(msg.getPriority())) {
             
-              addPairIfNotNull(nvps, "priority", msg.getPriority());
+              addPairIfNotNull(entityBuilder, "priority", msg.getPriority());
             
               if (MessagePriority.EMERGENCY.equals(msg.getPriority())) {
-                  nvps.add(new BasicNameValuePair("retry", String.valueOf(msg.getRetry())));
-                  nvps.add(new BasicNameValuePair("expire", String.valueOf(msg.getExpire())));
+                  entityBuilder.addTextBody("retry", String.valueOf(msg.getRetry()));
+                  entityBuilder.addTextBody("expire", String.valueOf(msg.getExpire()));
                   
-                  addPairIfNotNull(nvps, "callback", msg.getCallbackUrl());
+                  addPairIfNotNull(entityBuilder, "callback", msg.getCallbackUrl());
               }
         }
 
-        post.setEntity(new UrlEncodedFormEntity(nvps, Charset.defaultCharset()));
+        if (msg.getAttachment() != null) {
+            File attachment = msg.getAttachment();
+            MimetypesFileTypeMap ftm = new MimetypesFileTypeMap();
+            ContentType ct = ContentType.create(ftm.getContentType(attachment));
+
+            entityBuilder.addBinaryBody("attachment", attachment, ct, attachment.getName());
+        }
+
+        post.setEntity(entityBuilder.build());
 
         try {
             response = httpClient.execute(post);
@@ -217,9 +229,9 @@ public class PushoverRestClient implements PushoverClient {
         return cachedSounds;
     }
 
-    private void addPairIfNotNull(List<NameValuePair> nvps, String key, Object value) {
+    private void addPairIfNotNull(MultipartEntityBuilder entityBuilder, String key, Object value) {
         if (value != null) {
-            nvps.add(new BasicNameValuePair(key, value.toString()));
+            entityBuilder.addTextBody(key, value.toString());
         }
     }
 
